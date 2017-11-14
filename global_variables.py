@@ -13,7 +13,7 @@ def set_caffe_path(caffe_name):
         sys.path.insert(0,DEEPLAB_V1_PATH)
     elif caffe_name == 'DEEPLAB_V2':
         sys.path.insert(0,DEEPLAB_V2_PATH)
-    elif caffe_name == 'CAFFE':
+    elif caffe_name == 'FCN':
         sys.path.insert(0,FCN_PATH)
 
 

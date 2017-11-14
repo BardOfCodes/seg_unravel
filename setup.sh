@@ -42,6 +42,7 @@ sed -i "1i ${proto}" prototxt/fcn_alexnet.prototxt
 sed -i '414,425d' prototxt/dlvgglfov.prototxt
 sed -i '11,31d' prototxt/dlvgglfov.prototxt
 sed -i "11i ${proto}" prototxt/dlvgglfov.prototxt
+sed -i '433,438d' prototxt/dlvgglfov.prototxt
 sed -i -e 's/${EXP}/voc12/g' prototxt/dlvgglfov.prototxt 
 sed -i -e 's/${NUM_LABELS}/21/g' prototxt/dlvgglfov.prototxt 
 sed -i -e 's/${NET_ID}/dlvgglfov/g' prototxt/dlvgglfov.prototxt 
