@@ -1,6 +1,5 @@
 import global_variables as g
-caffe_name= 'DEEPLAB_V2'
-g.set_caffe_path(caffe_name)
+#g.set_caffe_path(caffe_name)
 import caffe
 from caffe.proto import caffe_pb2
 from google.protobuf import text_format
@@ -26,6 +25,7 @@ class seg_fix:
         self.KERNEL = 'kernel_size'
         self.caffe_version = caffe_version
         self.shift_type = shift_type
+        self.set_top_layer()
 
     def _get_net_structure(self,protofile,caffe_version):
         f = open(protofile,'r')
@@ -122,10 +122,11 @@ class seg_fix:
                          17:self.pool_fixations,
                          'Eltwise':self.eltwise_fixations,
                          'Crop':self.crop_fixations}
-        cur_fixations = {self.top_layers[i]:fixations_top[i] for i in range(1)}
+        cur_fixations = {self.top_layers[0]:fixations_top}
         #print(cur_fixations[0][0])
         reached_data = False
         image_level_fixations = []
+        all_fixations = {}
         while (not reached_data):
             layer_names = cur_fixations.keys()
             #print(layer_names)
@@ -192,7 +193,7 @@ class seg_fix:
                     del cur_fixations[cur]
                     print('removed',cur)
         image_level_fixations = [j for i in image_level_fixations for j in i]
-        return image_level_fixations
+        return image_level_fixations, all_fixations
 
     def crop_fixations(self,cur_fixations,cur_params,network):
         # TO DO
@@ -348,6 +349,7 @@ class seg_fix:
             feature=np.sum(np.sum(outputs,axis=2),axis=1)
             #feature.shape
             # Add function for K
+            # we used functions for changing K in the thesis.
             #K = 1
             top_layers = np.argsort(feature.ravel())[-K:]
             top_points = []

@@ -1,3 +1,9 @@
+
+# Examples
+
+Some images, Gifs, ==> image, seg-unravel process and then heatmaps.
+
+
 # Seg-Unravel
 
 This code contains implementation for **Segmentation-unravel**, something I attempted in my dissertation thesis, **"Per-Pixel Feedback for improving Semantic Segmentation"** [Arxiv Link](https://arxiv.org/abs/1712.02861). 
@@ -15,12 +21,9 @@ This repository contains code for **Seg-Unravel** on the following Segmentation 
 
 2) **DeepLab VGG16 Large-FOV** from "Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs". ([Arxiv Link](https://arxiv.org/pdf/1412.7062.pdf))
 
-3) ** DeepLab Resnet 101 Multi-Scale** from "DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs". ([Arxiv Link](https://arxiv.org/abs/1606.00915))
+3) **DeepLab Resnet 101 Multi-Scale** from "DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs". ([Arxiv Link](https://arxiv.org/abs/1606.00915))
 
 
-# Examples
-
-Some images, Gifs, ==> image, seg-unravel process and then heatmaps.
 
 # Instructions
 
@@ -41,9 +44,11 @@ python demo.py
 
 This will save `temp.npy` with fixations at various layers, `temp_<class-name>.png` as image-level fixation map for the detected classes, and `temp.gif` as the fixation backtrack through layers animation for biggest segmented class(except background) in the input image. 
 
-**Note** This code is a post-apocalypse recovery of code written during the project. It is not the cleanest code, nor the most lucid. However, it gets the job done, without errors. 
+**Note** This code is a post-apocalypse recovery of code written during the project, about an year ago. It is not the cleanest code, nor the most lucid. However, it gets the job done, without errors. 
 
 **Note** In context of segmentation, these 'fixations' might not be very useful. However, if anyone wants to use it, they may! 
+
+**TODO** Check for all networks. Add the gif function. Add Example.
 
 # Acknowledgement
 

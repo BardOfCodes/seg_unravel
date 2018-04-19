@@ -1,3 +1,6 @@
+mkdir -p prototxt
+mkdir -p weights
+mkdir -p caffe
 # First Download all the requied files.
 # FCN - Alexnet
 wget https://raw.githubusercontent.com/shelhamer/fcn.berkeleyvision.org/master/voc-fcn-alexnet/val.prototxt
@@ -19,7 +22,6 @@ rm *.zip
 rm *.caffemodel
 
 # Clone the deeplab repositories 
-mkdir -p caffe
 cd caffe
 git clone https://github.com/BVLC/caffe.git
 # Compile caffe by following the instructions at https://github.com/BVLC/caffe
