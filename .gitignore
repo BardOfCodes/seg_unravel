@@ -2,6 +2,9 @@
 *.caffemodel
 *.prototxt
 caffe/
+*.pyc
+*.png
+*.npy
 
 led / optimized / DLL files
 __pycache__/

@@ -13,7 +13,7 @@ mv train2_iter_8000.caffemodel weights/dlvgglfov.caffemodel
 wget http://liangchiehchen.com/projects/released/deeplab_aspp_resnet101/prototxt_and_model.zip
 unzip prototxt_and_model.zip
 mv test.prototxt prototxt/resnet_msc.prototxt
-mv train2_iter_20000.caffemodel weights/resnet_msc.prototxt
+mv train2_iter_20000.caffemodel weights/resnet_msc.caffemodel
 rm *.prototxt
 rm *.zip
 rm *.caffemodel
@@ -51,6 +51,7 @@ sed -i -e 's/dropout_ratio: 0.5/dropout_ratio: 0.0/g' prototxt/dlvgglfov.prototx
 sed -i '21825,21843d' prototxt/resnet_msc.prototxt
 sed -i '3,26d' prototxt/resnet_msc.prototxt
 sed -i "3i ${proto}" prototxt/resnet_msc.prototxt
+sed -i '21782,21861d' prototxt/resnet_msc.prototxt
 sed -i -e 's/${EXP}/voc12/g' prototxt/resnet_msc.prototxt 
 sed -i -e 's/${NUM_LABELS}/21/g' prototxt/resnet_msc.prototxt 
 sed -i -e 's/${NET_ID}/resnet_msc/g' prototxt/resnet_msc.prototxt 
