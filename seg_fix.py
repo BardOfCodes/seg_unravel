@@ -198,6 +198,8 @@ class seg_fix:
                     del cur_fixations[cur]
                     print('removed',cur)
         image_level_fixations = [j for i in image_level_fixations for j in i]
+        all_fixations.update({'data':image_level_fixations})
+        
         return image_level_fixations, all_fixations
 
     def crop_fixations(self,cur_fixations,cur_params,network):

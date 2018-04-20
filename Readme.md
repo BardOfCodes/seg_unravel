@@ -1,8 +1,12 @@
 
-# Examples
+| HeatMap Horse| HeatMap Person|
+|----|----|
+|![alt_text](data/obj_1.png)| ![alt_text](data/obj_2.png)|
 
-Some images, Gifs, ==> image, seg-unravel process and then heatmaps.
 
+| Fixation Flow |Fixation Flow|
+|----|----|
+| ![alt_text](data/flow_1.gif)| ![alt_text](data/flow_2.gif)|
 
 # Seg-Unravel
 
@@ -35,11 +39,11 @@ First, run the `setup.sh` file, to
 ```
 source setup.sh
 ```
-** Kindly install caffe according to your setup(with/without CUDA, for instance). As there are way too many variables while installing caffe, it has not been automated.**
+**Kindly install caffe according to your setup(with/without CUDA, for instance). As there are way too many variables while installing caffe, it has not been automated.**
 
 Now, we can run the `demo.py` file with various options to run **Seg-Unravel** on any selected network:
 ```
-python demo.py 
+python demo.py --network <network> --shift_type <shift-type> --image <image-path>
 ```
 
 This will save `temp.npy` with fixations at various layers, `temp_<class-name>.png` as image-level fixation map for the detected classes, and `temp.gif` as the fixation backtrack through layers animation for biggest segmented class(except background) in the input image. 
@@ -48,7 +52,7 @@ This will save `temp.npy` with fixations at various layers, `temp_<class-name>.p
 
 **Note** In context of segmentation, these 'fixations' might not be very useful. However, if anyone wants to use it, they may! 
 
-**TODO** Check for all networks. Add the gif function. Add Example.
+**TODO** Correct GIF Function for Resnet\_MSc.
 
 # Acknowledgement
 

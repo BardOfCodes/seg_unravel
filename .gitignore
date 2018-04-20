@@ -5,7 +5,7 @@ caffe/
 *.pyc
 *.png
 *.npy
-
+*.pkl
 led / optimized / DLL files
 __pycache__/
 *.py[cod]

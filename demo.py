@@ -12,6 +12,7 @@ from global_variables import *
 import utils as u
 import numpy as np
 import cv2
+import pickle
 
 def main():
     parser = argparse.ArgumentParser(description='Seg-unravel on a given image.')
@@ -52,21 +53,26 @@ def main():
     class_ids = list(np.unique(seg_map))
     class_ids.remove(0) # not bg
     seg_space = [np.sum(seg_map==id) for id in class_ids]
-    class_id = class_ids[np.argmax(seg_space)]
+    class_id = 15#class_ids[np.argmax(seg_space)]
     
     # you can get fixations for each of the detected classes by sending each detected class-id in the following function
     image_fixations, all_fixations= fixer.get_fixations_at_all_layers(top_fixations[class_id],net,save_all=True)
     
     # save numpy with fixations 
-    np.save('temp.npy',all_fixations)
+    f = open('temp.pkl','w')
+    pickle.dump(all_fixations,f)
+    f.close()
     
     # Get the image_with Fixations
     img_with_fixations = u.embed_fixations(args.image,image_fixations)
     cv2.imwrite('temp.png', img_with_fixations)
     
     # get the gif of fixation flow:
-    #img_with_fixations = u.embed_fixations_gif(args.image, all_fixations)
+    img_with_fixations = u.embed_fixations_gif(args.image, all_fixations,fixer,net)
     # this saves the gif as temp.gif
+    
+    # heat map
+    u.get_heatmap(args.image, image_fixations)
 
 if __name__ == '__main__':
     main()
