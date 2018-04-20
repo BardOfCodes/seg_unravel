@@ -16,9 +16,9 @@ def set_caffe_path(caffe_name):
     elif caffe_name == 'FCN':
         sys.path.insert(0,FCN_PATH)
         
-file_map = {'DEEPLAB_V1':['dlvgglfov.prototxt','dlvgglfov.caffemodel'],
-           'DEEPLAB_V2':['resnet_msc.prototxt','resnet_msc.caffemodel'],
-           'FCN':['fcn_alexnet.prototxt','fcn_alexnet.caffemodel']}
+file_map = {'DEEPLAB_V1':['dlvgglfov.prototxt','dlvgglfov.caffemodel','fc8_interp'],
+           'DEEPLAB_V2':['resnet_msc.prototxt','resnet_msc.caffemodel','fc1_interp'],
+           'FCN':['fcn_alexnet.prototxt','fcn_alexnet.caffemodel','score_fr']}
 
 
 

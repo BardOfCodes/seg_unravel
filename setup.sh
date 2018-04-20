@@ -40,6 +40,7 @@ export proto="input:\"data\"\ninput_dim:1\ninput_dim:3\ninput_dim:513\ninput_dim
 sed -i '263,273d' prototxt/fcn_alexnet.prototxt
 sed -i '1,11d' prototxt/fcn_alexnet.prototxt
 sed -i "1i ${proto}" prototxt/fcn_alexnet.prototxt
+sed -i '232,257d' prototxt/fcn_alexnet.prototxt
 # DlVggLfov
 sed -i '414,425d' prototxt/dlvgglfov.prototxt
 sed -i '11,31d' prototxt/dlvgglfov.prototxt

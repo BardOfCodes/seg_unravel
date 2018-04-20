@@ -33,13 +33,15 @@ def main():
     prototxt = os.path.join('prototxt',file_map[caffe_version][0])
     wts = os.path.join('weights',file_map[caffe_version][1])
     
-    
-    net = caffe.Net(prototxt,wts, caffe.TEST)
-    
+    if caffe_version in ['DEEPLAB_V2','FCN']:
+        net = caffe.Net(prototxt,wts, caffe.TEST)
+    else:
+        net = caffe.Net(prototxt,wts)
     # For forward
     image_blob = u.get_blob(args.image)
     net.blobs['data'].data[...] = image_blob
-    top_layer_output = net.forward()['fc1_interp']
+    last_layer = file_map[caffe_version][2]
+    top_layer_output = net.forward()[last_layer]
     
     # Seg_fix in action
     fixer = seg_fix.seg_fix(prototxt,caffe_version)
@@ -53,14 +55,14 @@ def main():
     class_id = class_ids[np.argmax(seg_space)]
     
     # you can get fixations for each of the detected classes by sending each detected class-id in the following function
-    image_fixations, all_fixations= fixer.get_fixations_at_all_layers(top_fixations[class_id],net)
+    image_fixations, all_fixations= fixer.get_fixations_at_all_layers(top_fixations[class_id],net,save_all=True)
     
     # save numpy with fixations 
     np.save('temp.npy',all_fixations)
     
     # Get the image_with Fixations
     img_with_fixations = u.embed_fixations(args.image,image_fixations)
-    cv2.imsave('temp.png', img_with_fixations)
+    cv2.imwrite('temp.png', img_with_fixations)
     
     # get the gif of fixation flow:
     #img_with_fixations = u.embed_fixations_gif(args.image, all_fixations)

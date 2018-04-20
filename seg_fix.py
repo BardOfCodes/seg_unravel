@@ -21,7 +21,10 @@ class seg_fix:
         self.net[u'data']= {'bottom':['data'],'top':['conv1']}
         # remove all the ReLU, BN,SCALE.
         self.fixation_dict = {}
-        self.DILATION = 'dilation'
+        if caffe_version == "DEEPLAB_V2":
+            self.DILATION = 'dilation'
+        else:
+            self.DILATION = 'hole'
         self.KERNEL = 'kernel_size'
         self.caffe_version = caffe_version
         self.shift_type = shift_type
@@ -32,7 +35,7 @@ class seg_fix:
         solver = caffe_pb2.NetParameter()
         net_params =text_format.Merge(str(f.read()), solver)
         net_python = {}
-        if caffe_version in ['BLVC', 'DEEPLAB_V2']:
+        if caffe_version in ['FCN', 'DEEPLAB_V2']:
             layer_obj = net_params.layer
         elif caffe_version == 'DEEPLAB_V1':
             layer_obj = net_params.layers
@@ -121,7 +124,8 @@ class seg_fix:
                          'Pooling':self.pool_fixations,
                          17:self.pool_fixations,
                          'Eltwise':self.eltwise_fixations,
-                         'Crop':self.crop_fixations}
+                         'Crop':self.crop_fixations,
+                         'LRN':self.LRN_fixations}
         cur_fixations = {self.top_layers[0]:fixations_top}
         #print(cur_fixations[0][0])
         reached_data = False
@@ -139,6 +143,7 @@ class seg_fix:
                 break
             if save_all:
                 all_fixations.update(cur_fixations)
+                print('the len of all_fixations',len(all_fixations.keys()))
             if len(cur_fixations.keys())==1:
                 print('len is 1')
                 name = cur_fixations.keys()[0]
@@ -196,11 +201,29 @@ class seg_fix:
         return image_level_fixations, all_fixations
 
     def crop_fixations(self,cur_fixations,cur_params,network):
-        # TO DO
+        # Parameters : K top_k
+        #              S Stride
+        #              filter_size: kernel size
+        #              pad = padding!!!
+        
+        pooling_params = cur_params['pooling_param']
+        value_names = ['stride','pad',self.KERNEL]
+        defaults = [1,0,2]
+        S,pad,filter_size = self._checker_func(pooling_params,value_names,defaults)
         return None
     def deconv_fixations(self,cur_fixations,cur_params,network):
         # TO DO
         return None
+    
+    def LRN_fixations(sef, cur_fixations, cur_params, network):
+        # Assuming that it will be WITHIN_CHANNEL, we just remap it to the same location in the lower layer;
+        
+        fixations_below_list = []
+        for point in cur_fixations:
+            fixations_below_list.extend([tuple(point)])
+        fixations_below_list = list(set(fixations_below_list))
+        name = cur_params['bottom'][0]
+        return {name:fixations_below_list}
 
     def interp_fixations(self,cur_fixations,cur_params,network):
         zoom_factor, shrink_factor = self._checker_func(cur_params['interp_param'],['zoom_factor','shrink_factor'],[1,1])
@@ -244,7 +267,7 @@ class seg_fix:
         pooling_params = cur_params['pooling_param']
         value_names = ['stride','pad',self.KERNEL]
         defaults = [1,0,2]
-        S,filter_size,pad = self._checker_func(pooling_params,value_names,defaults)
+        S,pad,filter_size = self._checker_func(pooling_params,value_names,defaults)
         
         npad = ((0,0),(pad,pad),(pad,pad))
         blob_below = network.blobs[cur_params['bottom'][0]].data[0]
@@ -255,17 +278,19 @@ class seg_fix:
         for point in cur_fixations:
             # pool will just reduce the spatial dimensions of blob.
             z = point[0]
-            y = point[1]
             x = point[2]
+            y = point[1]
             #print(point)
-            blob_below_cur = blob_below_pad[point[0]:point[0]+1,y*S:y*S + filter_size,x*S:x*S + filter_size]
+            blob_below_cur = blob_below_pad[z:z+1,y*S:y*S + filter_size,x*S:x*S + filter_size]
             
             list_maxer = np.dstack(np.unravel_index(np.argsort(blob_below_cur.ravel()), blob_below_cur.shape))
             # add k should be less than filter_size*filter_size
             top_points = list_maxer[0][-K:]
+            #print('output',blob_below_cur[top_points[0][0],top_points[0][1],top_points[0][2]],top_points)
+                
             top_points = [(z,min(max(0,point[1]+ y*S-pad),blob_below.shape[1]-1),min(max(0,point[2]+x*S-pad),blob_below.shape[2]-1) ) for point in top_points]
             fixations_below_list.extend(top_points)
-            #print('output',top_points)
+            # fixations_below_list.extend(np.copy(point))
         fixations_below_list = list(set(fixations_below_list))
         name = cur_params['bottom'][0]
         return {name:fixations_below_list}
@@ -282,6 +307,7 @@ class seg_fix:
         name_params = ['stride','pad','group',self.DILATION]
         defaults = [1,0,1,1]
         S,pad,group,hole =self._checker_func(convolution_params,name_params,defaults)
+        print(S,pad,group,hole)
         #if self.caffe_version == 'DEEPLAB_V2':
         #    pad = int(pad[0])
         #    hole = int(hole[0])
@@ -311,7 +337,6 @@ class seg_fix:
         z_per_group_below = z_blob_below/group
             
         for point in cur_fixations:
-            #print(point)
             filter_res = point[0]
             filter_params = network.params[cur_params['name']][0].data[filter_res]
             
@@ -368,7 +393,6 @@ class seg_fix:
                 list_points.extend(pointer)
             top_points = list_points
             fixations_below_list.extend(top_points)
-            #print(top_points)
         fixations_below_list = list(set(fixations_below_list))
         name = cur_params['bottom'][0]
         return {name:fixations_below_list}
